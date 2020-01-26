@@ -29,8 +29,12 @@ pub fn encode_hello(msg: Hello) -> Result<BytesMut, Errors> {
 }
 
 pub fn decode_hello(mut buffer: BytesMut) -> Result<Hello, Errors> {
-    let magic_num = buffer.split_to(31).get_i32();
-    let size = buffer.split_to(15).get_i16();
+    // since the buffer reads in bytes, we have to divide things up into
+    // byte indexes ->
+    //    32 bit is 4 bytes -> Index 0 - 3
+    //    16 bit is 2 bytes -> Index 0 - 1
+    let magic_num = buffer.split_to(4).get_i32();
+    let size = buffer.split_to(2).get_i16();
 
     // Throw errors if packet is unreliable
     is_hello(magic_num)?;
