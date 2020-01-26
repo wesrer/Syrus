@@ -49,9 +49,7 @@ pub fn decode_hello(mut buffer: BytesMut) -> Result<Hello, Errors> {
 fn verify_len(buffer: &BytesMut, size: i16) -> Result<(), Errors> {
     if buffer.len() != (size as usize) {
         return Err(Errors::InvalidMessageErrors(
-            InvalidMessageErrors::IncorrectLengthSpecified(
-                "Length Specified by message doesn't match actual message length".to_string(),
-            ),
+            InvalidMessageErrors::incorrect_length(),
         ));
     }
 
@@ -61,9 +59,7 @@ fn verify_len(buffer: &BytesMut, size: i16) -> Result<(), Errors> {
 fn is_hello(magic_number: i32) -> Result<(), Errors> {
     if magic_number != globals::MAGIC_NUMBER_HELLO_MESSAGE {
         return Err(Errors::InvalidMessageErrors(
-            InvalidMessageErrors::InvalidHello(
-                "Incorrect Magic Number at the beginning of message. Expected Hello".to_string(),
-            ),
+            InvalidMessageErrors::invalid_hello(),
         ));
     }
     Ok(())

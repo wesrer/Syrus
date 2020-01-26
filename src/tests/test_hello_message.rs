@@ -1,8 +1,8 @@
 use crate::block_exchange_protocol::Hello;
-use crate::hello_message::*;
+use crate::messages::*;
 
 #[test]
-fn test_hello_encode_decode() {
+fn test_succesful_hello_encode_decode() {
     let msg = Hello {
         device_name: "This Android".to_string(),
         client_name: "syncthing".to_string(),

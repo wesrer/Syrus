@@ -1,6 +1,6 @@
 mod errors;
 mod globals;
-mod hello_message;
+mod messages;
 
 #[cfg(test)]
 mod tests;
