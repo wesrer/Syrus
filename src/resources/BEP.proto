@@ -72,7 +72,7 @@ message IndexUpdate {
 }
 
 message FileInfo {
-string       name           = 1;
+    string       name           = 1;
     FileInfoType type           = 2;
     int64        size           = 3;
     uint32       permissions    = 4;

@@ -1,5 +1,5 @@
 use crate::block_exchange_protocol::Hello;
-use crate::messages::*;
+use crate::messages::{DecodeFrom, EncodeTo};
 
 #[test]
 fn test_succesful_hello_encode_decode() {
@@ -9,7 +9,7 @@ fn test_succesful_hello_encode_decode() {
         client_version: "v0.7.2".to_string(),
     };
 
-    let buffer = encode_hello(msg.clone()).unwrap();
+    let buffer = Hello::encode_to(msg.clone()).unwrap();
 
-    assert_eq!(msg, decode_hello(buffer).unwrap());
+    assert_eq!(msg, Hello::decode_from(buffer).unwrap());
 }

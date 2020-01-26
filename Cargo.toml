@@ -13,4 +13,4 @@ prost="^0.6"
 prost-types="^0.6"
 
 [build-dependencies]
-prost-build= {version = ""}
+prost-build="^0.6.1"
