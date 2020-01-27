@@ -1,11 +1,11 @@
-use super::message_traits::{DecodeFrom, EncodeTo};
+use super::message_traits::{Decode, Encode};
 use crate::block_exchange_protocol::Hello;
 use crate::errors::{Errors, InvalidMessageErrors};
 use crate::globals;
 use bytes::{Buf, BufMut, BytesMut};
 use prost::Message;
 
-impl EncodeTo for Hello {
+impl Encode for Hello {
     fn encode_to(msg: Hello) -> Result<BytesMut, Errors> {
         // TODO: Check whether the versioning follow semantic versioning standards
 
@@ -31,8 +31,8 @@ impl EncodeTo for Hello {
     }
 }
 
-impl DecodeFrom for Hello {
-    fn decode_from(mut buffer: BytesMut) -> Result<Hello, Errors> {
+impl Decode for Hello {
+    fn decode_from(buffer: &mut BytesMut) -> Result<Hello, Errors> {
         // since the buffer reads in bytes, we have to divide things up into
         // byte indexes ->
         //    32 bit is 4 bytes -> Index 0 - 3

@@ -11,6 +11,7 @@ rustls= "^0.16.0"
 bytes="^0.5"
 prost="^0.6"
 prost-types="^0.6"
+compress="^0.1.2"
 
 [build-dependencies]
 prost-build="^0.6.1"

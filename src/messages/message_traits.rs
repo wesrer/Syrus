@@ -1,12 +1,12 @@
 use crate::errors::Errors;
 use bytes::{Buf, BufMut, BytesMut};
 
-pub trait EncodeTo {
+pub trait Encode {
     fn encode_to(msg: Self) -> Result<BytesMut, Errors>;
 }
 
-pub trait DecodeFrom {
-    fn decode_from(buffer: BytesMut) -> Result<Self, Errors>
+pub trait Decode {
+    fn decode_from(buffer: &mut BytesMut) -> Result<Self, Errors>
     where
         Self: std::marker::Sized;
 }
