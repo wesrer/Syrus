@@ -2,12 +2,7 @@ use super::message_traits::{Decode, Encode};
 use crate::block_exchange_protocol::{Header, MessageCompression, MessageType};
 use crate::errors::{Errors, InvalidMessageErrors};
 use bytes::{Buf, BufMut, BytesMut};
-use compress::lz4;
 use prost::Message;
-
-// impl Decode for MessageType {
-//     fn decode_from(buffer: &BytesMut) {}
-// }
 
 impl Decode for Header {
     fn decode_from(mut buffer: &mut BytesMut) -> Result<Header, Errors> {
@@ -22,8 +17,24 @@ impl Decode for Header {
     }
 }
 
+impl Encode for Header {
+    fn encode_to_bytes(&self) -> Result<BytesMut, Errors> {
+        let mut finalbuf = BytesMut::new();
+        let mut encodebuf: Vec<u8> = Vec::new();
+
+        match self.encode(&mut encodebuf) {
+            Ok(_) => {
+                finalbuf.put_i16(encodebuf.len() as i16);
+                finalbuf.put_slice(&encodebuf);
+                Ok(finalbuf)
+            }
+            Err(e) => Err(Errors::EncodeError(e)),
+        }
+    }
+}
+
 impl Header {
-    fn message_type(&self) -> Result<MessageType, Errors> {
+    pub fn message_type(&self) -> Result<MessageType, Errors> {
         match MessageType::from_i32(self.r#type) {
             Some(x) => Ok(x),
             None => Err(Errors::InvalidMessageErrors(
@@ -32,7 +43,7 @@ impl Header {
         }
     }
 
-    fn message_compression(&self) -> Result<MessageCompression, Errors> {
+    pub fn message_compression(&self) -> Result<MessageCompression, Errors> {
         match MessageCompression::from_i32(self.compression) {
             Some(x) => Ok(x),
             None => Err(Errors::InvalidMessageErrors(

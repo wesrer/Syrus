@@ -16,10 +16,9 @@ impl InvalidMessageErrors {
         )
     }
 
-    pub fn incorrect_length() -> Self {
+    pub fn incorrect_length(msg_type: String) -> Self {
         Self::IncorrectLengthSpecified(
-            "Length Specified by hello message doesn't match actual message length. Cannot establish connection."
-                .to_string(),
+            format!("Length Specified by {} message doesn't match actual message length. Cannot establish connection.", msg_type)
         )
     }
 

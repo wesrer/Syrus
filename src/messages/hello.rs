@@ -1,4 +1,4 @@
-use super::message_traits::{Decode, Encode};
+use super::message_traits::{Decode, Encode, Utils};
 use crate::block_exchange_protocol::Hello;
 use crate::errors::{Errors, InvalidMessageErrors};
 use crate::globals;
@@ -6,14 +6,14 @@ use bytes::{Buf, BufMut, BytesMut};
 use prost::Message;
 
 impl Encode for Hello {
-    fn encode_to(msg: Hello) -> Result<BytesMut, Errors> {
+    fn encode_to_bytes(&self) -> Result<BytesMut, Errors> {
         // TODO: Check whether the versioning follow semantic versioning standards
 
         let mut finalbuf = BytesMut::new();
         let mut encodebuf: Vec<u8> = Vec::new();
 
         // encode the message into encode buffer and match on the returned result
-        match msg.encode(&mut encodebuf) {
+        match self.encode(&mut encodebuf) {
             Ok(_) => {
                 // Add the magic number for the Hello message to the beginning of the buffer
                 finalbuf.put_i32(globals::MAGIC_NUMBER_HELLO_MESSAGE);
@@ -42,7 +42,7 @@ impl Decode for Hello {
 
         // Throw errors if packet is unreliable
         is_hello(magic_num)?;
-        verify_len(&buffer, size)?;
+        Hello::verify_len(&buffer, size as usize, "Hello".to_string())?;
 
         match Hello::decode(buffer) {
             Ok(msg) => Ok(msg),
@@ -51,15 +51,7 @@ impl Decode for Hello {
     }
 }
 
-fn verify_len(buffer: &BytesMut, size: i16) -> Result<(), Errors> {
-    if buffer.len() != (size as usize) {
-        return Err(Errors::InvalidMessageErrors(
-            InvalidMessageErrors::incorrect_length(),
-        ));
-    }
-
-    Ok(())
-}
+impl Utils for Hello {}
 
 fn is_hello(magic_number: i32) -> Result<(), Errors> {
     if magic_number != globals::MAGIC_NUMBER_HELLO_MESSAGE {

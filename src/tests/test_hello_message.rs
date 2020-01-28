@@ -9,7 +9,7 @@ fn test_succesful_hello_encode_decode() {
         client_version: "v0.7.2".to_string(),
     };
 
-    let mut buffer = Hello::encode_to(msg.clone()).unwrap();
+    let mut buffer = msg.encode_to_bytes().unwrap();
 
     assert_eq!(msg, Hello::decode_from(&mut buffer).unwrap());
 }
