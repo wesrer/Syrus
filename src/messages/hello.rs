@@ -1,6 +1,6 @@
 use super::message_traits::{Decode, Encode, Utils};
-use crate::block_exchange_protocol::Hello;
-use crate::errors::{Errors, InvalidMessageErrors};
+use crate::block_exchange_protocol::{Header, Hello};
+use crate::errors::{Errors, InvalidMessageError};
 use crate::globals;
 use bytes::{Buf, BufMut, BytesMut};
 use prost::Message;
@@ -55,8 +55,8 @@ impl Utils for Hello {}
 
 fn is_hello(magic_number: i32) -> Result<(), Errors> {
     if magic_number != globals::MAGIC_NUMBER_HELLO_MESSAGE {
-        return Err(Errors::InvalidMessageErrors(
-            InvalidMessageErrors::invalid_hello(),
+        return Err(Errors::InvalidMessageError(
+            InvalidMessageError::invalid_hello(),
         ));
     }
     Ok(())

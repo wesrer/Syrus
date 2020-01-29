@@ -1,1 +1,1 @@
-mod test_hello_message;
+mod test_messages;

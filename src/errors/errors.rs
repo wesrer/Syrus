@@ -1,7 +1,14 @@
 use prost::{DecodeError, EncodeError};
 
 #[derive(Debug)]
-pub enum InvalidMessageErrors {
+pub enum Errors {
+    InvalidMessageError(InvalidMessageError),
+    DecodeError(DecodeError),
+    EncodeError(EncodeError),
+}
+
+#[derive(Debug)]
+pub enum InvalidMessageError {
     InvalidHello(String),
     IncorrectLengthSpecified(String),
     InvalidVersionSyntax(String),
@@ -9,7 +16,7 @@ pub enum InvalidMessageErrors {
     InvalidMessageCompression(String),
 }
 
-impl InvalidMessageErrors {
+impl InvalidMessageError {
     pub fn invalid_hello() -> Self {
         Self::InvalidHello(
             "Incorrect Magic Number at the beginning of message. Expected Hello".to_string(),
@@ -40,11 +47,4 @@ impl InvalidMessageErrors {
             "Message Compression type not recognized. Could not decode message.".to_string(),
         )
     }
-}
-
-#[derive(Debug)]
-pub enum Errors {
-    InvalidMessageErrors(InvalidMessageErrors),
-    DecodeError(DecodeError),
-    EncodeError(EncodeError),
 }

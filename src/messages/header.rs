@@ -1,6 +1,6 @@
 use super::message_traits::{Decode, Encode};
 use crate::block_exchange_protocol::{Header, MessageCompression, MessageType};
-use crate::errors::{Errors, InvalidMessageErrors};
+use crate::errors::{Errors, InvalidMessageError};
 use bytes::{Buf, BufMut, BytesMut};
 use prost::Message;
 
@@ -37,8 +37,8 @@ impl Header {
     pub fn message_type(&self) -> Result<MessageType, Errors> {
         match MessageType::from_i32(self.r#type) {
             Some(x) => Ok(x),
-            None => Err(Errors::InvalidMessageErrors(
-                InvalidMessageErrors::invalid_message_type(),
+            None => Err(Errors::InvalidMessageError(
+                InvalidMessageError::invalid_message_type(),
             )),
         }
     }
@@ -46,8 +46,8 @@ impl Header {
     pub fn message_compression(&self) -> Result<MessageCompression, Errors> {
         match MessageCompression::from_i32(self.compression) {
             Some(x) => Ok(x),
-            None => Err(Errors::InvalidMessageErrors(
-                InvalidMessageErrors::invalid_message_compression(),
+            None => Err(Errors::InvalidMessageError(
+                InvalidMessageError::invalid_message_compression(),
             )),
         }
     }

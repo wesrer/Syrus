@@ -1,3 +1,3 @@
 mod errors;
 
-pub use errors::{Errors, InvalidMessageErrors};
+pub use errors::{Errors, InvalidMessageError};
