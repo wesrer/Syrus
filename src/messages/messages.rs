@@ -15,6 +15,8 @@ pub struct MessageContent {
     message: Messages,
 }
 
+// Since all the variants of Messages will have a similar API, we can use a macro
+// to represent common behavior
 macro_rules! messages_enum {
     ($name:ident { $($variant:ident),* })   => (
         #[derive(Debug, PartialEq)]
@@ -30,6 +32,9 @@ macro_rules! messages_enum {
 //      ...
 // }
 // Where the ClusterConfig inside the paren is the struct initialized by prost
+//
+// The macro also makes all the variants of Message to impl Decode, so we can
+// call decode_from(buffer) on them directly
 #[macro_use]
 messages_enum!(Messages {
     ClusterConfig,
@@ -112,5 +117,3 @@ impl MessageContent {
 }
 
 impl Utils for MessageContent {}
-
-// Implement the decode trait for all the message types
