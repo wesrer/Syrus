@@ -1,6 +1,5 @@
-use crate::block_exchange_protocol::Header;
 use crate::errors::{Errors, InvalidMessageError};
-use bytes::{Buf, BufMut, BytesMut};
+use bytes::BytesMut;
 use prost::Message;
 
 pub trait Encode {
@@ -12,6 +11,8 @@ pub trait Decode {
     where
         Self: std::marker::Sized + Message + std::default::Default,
     {
+        // Try to decode with the prost decode function given for the
+        // implemented struct, and propagate errors upwards
         match Self::decode(buffer) {
             Ok(x) => Ok(x),
             Err(e) => Err(Errors::DecodeError(e)),

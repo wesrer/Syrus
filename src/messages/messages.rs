@@ -6,31 +6,49 @@ use crate::block_exchange_protocol::{
 use crate::errors::{Errors, InvalidMessageError};
 use bytes::{Buf, BufMut, BytesMut};
 use compress::lz4;
-use prost::Message;
 
+// TODO: Assess whether we need this data structure, or if we can directly use Messages
+//       It's currently here because I am unsure whether we need the header at a later
+//       stage in the program evaluation
 pub struct MessageContent {
     header: Header,
     message: Messages,
 }
 
-pub enum Messages {
-    ClusterConfig(ClusterConfig),
-    Index(Index),
-    IndexUpdate(IndexUpdate),
-    Request(Request),
-    Response(Response),
-    DownloadProgress(DownloadProgress),
-    Ping(Ping),
-    Close(Close),
+macro_rules! messages_enum {
+    ($name:ident { $($variant:ident),* })   => (
+        #[derive(Debug, PartialEq)]
+        pub enum $name { $($variant($variant)),* }
+
+        $(impl Decode for $variant {})*
+    );
 }
+
+// Expands to:
+// pub enum Messages {
+//      ClusterConfig(ClusterConfig),
+//      ...
+// }
+// Where the ClusterConfig inside the paren is the struct initialized by prost
+#[macro_use]
+messages_enum!(Messages {
+    ClusterConfig,
+    Index,
+    IndexUpdate,
+    Request,
+    Response,
+    DownloadProgress,
+    Ping,
+    Close
+});
 
 impl Decode for MessageContent {
     fn decode_from(buffer: &mut BytesMut) -> Result<Self, Errors> {
         let header = Header::decode_from(buffer)?;
 
         // NOTE: We are getting i32 because of the protocol specifications of always assuming we receive ints
-        // and not unsigneds, even though it doesn't make much sense to received unsigneds.
-        // Maybe we should verify if this is ever negative, which would indicate a corrupt block
+        //       and not unsigneds, even though it doesn't make much sense to received signed values.
+        // TODO: Assess whether we should verify if this is ever negative, which would indicate a corrupt block
         let msg_len = buffer.split_to(4).get_i32();
 
         // TODO: instead of sending post-auth message as the message type, generate strings from message types
@@ -62,7 +80,8 @@ fn decompress(buffer: &mut BytesMut, compression: MessageCompression) -> BytesMu
     } else {
         // don't need to do anything if there is no compression detected
 
-        // NOTE: Hacky solution to get a uniform API for both compressed cases and non-compressed cases
+        // NOTE: Hacky solution to get a uniform API for both
+        //       compressed cases and non-compressed cases
         buffer.clone()
     }
 }
@@ -72,6 +91,9 @@ impl MessageContent {
         buffer: &mut BytesMut,
         message_type: MessageType,
     ) -> Result<Messages, Errors> {
+        // NOTE: Cannot shorten this with a macro because the current version of Rust
+        //       doesn't let you iterate over Enums. If this changes in future versions,
+        //       we can get rid of the repitition here.
         Ok(match message_type {
             MessageType::ClusterConfig => {
                 Messages::ClusterConfig(ClusterConfig::decode_from(buffer)?)
@@ -92,13 +114,3 @@ impl MessageContent {
 impl Utils for MessageContent {}
 
 // Implement the decode trait for all the message types
-
-// FIXME: Rewrite this with macros
-impl Decode for ClusterConfig {}
-impl Decode for Index {}
-impl Decode for IndexUpdate {}
-impl Decode for Request {}
-impl Decode for Response {}
-impl Decode for DownloadProgress {}
-impl Decode for Ping {}
-impl Decode for Close {}
