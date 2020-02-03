@@ -23,6 +23,18 @@ macro_rules! messages_enum {
         pub enum $name { $($variant($variant)),* }
 
         $(impl Decode for $variant {})*
+
+        impl MessageContent {
+            fn from_buffer_and_message_type(buffer: &mut BytesMut, message_type: MessageType,) -> Result<Messages, Errors> {
+                Ok(match message_type {
+                        $(
+                            // Expands to:
+                            // MessageType::ClusterConfig => Messages::ClusterConfig(ClusterConfig::decode_from(buffer)?)
+                            MessageType::$variant => Messages::$variant($variant::decode_from(buffer)?),
+                        )*
+                    })
+            }
+        }
     );
 }
 
@@ -88,31 +100,6 @@ fn decompress(buffer: &mut BytesMut, compression: MessageCompression) -> BytesMu
         // NOTE: Hacky solution to get a uniform API for both
         //       compressed cases and non-compressed cases
         buffer.clone()
-    }
-}
-
-impl MessageContent {
-    fn from_buffer_and_message_type(
-        buffer: &mut BytesMut,
-        message_type: MessageType,
-    ) -> Result<Messages, Errors> {
-        // NOTE: Cannot shorten this with a macro because the current version of Rust
-        //       doesn't let you iterate over Enums. If this changes in future versions,
-        //       we can get rid of the repitition here.
-        Ok(match message_type {
-            MessageType::ClusterConfig => {
-                Messages::ClusterConfig(ClusterConfig::decode_from(buffer)?)
-            }
-            MessageType::Index => Messages::Index(Index::decode_from(buffer)?),
-            MessageType::IndexUpdate => Messages::IndexUpdate(IndexUpdate::decode_from(buffer)?),
-            MessageType::Request => Messages::Request(Request::decode_from(buffer)?),
-            MessageType::Response => Messages::Response(Response::decode_from(buffer)?),
-            MessageType::DownloadProgress => {
-                Messages::DownloadProgress(DownloadProgress::decode_from(buffer)?)
-            }
-            MessageType::Ping => Messages::Ping(Ping::decode_from(buffer)?),
-            MessageType::Close => Messages::Close(Close::decode_from(buffer)?),
-        })
     }
 }
 
