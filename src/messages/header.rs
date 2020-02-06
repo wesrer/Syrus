@@ -1,6 +1,9 @@
-use super::message_traits::{Decode, Encode};
-use crate::block_exchange_protocol::{Header, MessageCompression, MessageType};
-use crate::errors::{Errors, InvalidMessageError};
+use crate::{
+    block_exchange_protocol::{Header, MessageCompression, MessageType},
+    errors::{Errors, InvalidMessageError},
+    messages::{Decode, Encode},
+};
+
 use bytes::{Buf, BufMut, BytesMut};
 use prost::Message;
 

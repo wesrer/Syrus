@@ -1,9 +1,12 @@
-use super::{Decode, Encode, Utils};
-use crate::block_exchange_protocol::{
-    Close, ClusterConfig, DownloadProgress, Header, Index, IndexUpdate, MessageCompression,
-    MessageType, Ping, Request, Response,
+use crate::{
+    block_exchange_protocol::{
+        Close, ClusterConfig, DownloadProgress, Header, Index, IndexUpdate, MessageCompression,
+        MessageType, Ping, Request, Response,
+    },
+    errors::{Errors, InvalidMessageError},
+    messages::{Decode, Encode, Utils},
 };
-use crate::errors::{Errors, InvalidMessageError};
+
 use bytes::{Buf, BufMut, BytesMut};
 use compress::lz4;
 
@@ -17,6 +20,8 @@ pub struct MessageContent {
 
 // Since all the variants of Messages will have a similar API, we can use a macro
 // to represent common behavior
+
+// NOTE: Are the macros affecting program readability?
 macro_rules! messages_enum {
     ($name:ident { $($variant:ident),* })   => (
         #[derive(Debug, PartialEq)]
@@ -30,6 +35,7 @@ macro_rules! messages_enum {
                         $(
                             // Expands to:
                             // MessageType::ClusterConfig => Messages::ClusterConfig(ClusterConfig::decode_from(buffer)?)
+                            // ...
                             MessageType::$variant => Messages::$variant($variant::decode_from(buffer)?),
                         )*
                     })

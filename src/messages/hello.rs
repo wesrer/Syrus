@@ -1,7 +1,10 @@
-use super::message_traits::{Decode, Encode, Utils};
-use crate::block_exchange_protocol::Hello;
-use crate::errors::{Errors, InvalidMessageError};
-use crate::globals;
+use crate::{
+    block_exchange_protocol::Hello,
+    errors::{Errors, InvalidMessageError},
+    globals,
+    messages::{Decode, Encode, Utils},
+};
+
 use bytes::{Buf, BufMut, BytesMut};
 use prost::Message;
 
@@ -18,10 +21,10 @@ impl Encode for Hello {
                 // Add the magic number for the Hello message to the beginning of the buffer
                 finalbuf.put_i32(globals::MAGIC_NUMBER_HELLO_MESSAGE);
 
-                // Add the size of the encoding to the beginning of the buffer
+                // Add the size of the encoding to the buffer next
                 finalbuf.put_i16(encodebuf.len() as i16);
 
-                // read bytes from the encoding and put into the return buffer
+                // read bytes from the encoding and insert them into the return buffer
                 finalbuf.put_slice(&encodebuf);
 
                 Ok(finalbuf)
