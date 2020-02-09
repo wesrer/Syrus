@@ -29,17 +29,23 @@ enum MessageCompression {
 }
 
 message ClusterConfig {
+    // list of folders that will be synchronized over the 
+    // current connection
     repeated Folder folders = 1;
 }
 
 message Folder {
-    string id                   = 1;
-    string label                = 2;
-    bool   read_only            = 3;
-    bool   ignore_permissions   = 4;
-    bool   ignore_delete        = 5;
-    bool   disable_temp_indexes = 6;
-
+    string id                   = 1; // unique identifier
+    string label                = 2; // human readable name
+    bool   read_only            = 3; // if set, the device will receive no updates for this folder
+    bool   ignore_permissions   = 4; // if set, the device will not accept or announce permissions
+    bool   ignore_delete        = 5; // if set, the device will ignore deletes for this folder
+    
+    bool   disable_temp_indexes = 6; // set for folders that will not dispatch and do not wish
+                                     // to receive progress updates about partially downloaded
+                                     // files via Download Progress messages
+    bool paused                 = 7; // folders that are currenly paused
+    
     repeated Device devices = 16;
 }
 

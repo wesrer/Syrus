@@ -25,6 +25,7 @@ fn test_succesful_header_encode_decode() {
         r#type: MessageType::DownloadProgress as i32,
         compression: MessageCompression::None as i32,
     };
+
     Header {
         r#type: MessageType::IndexUpdate as i32,
         compression: MessageCompression::Lz4 as i32,

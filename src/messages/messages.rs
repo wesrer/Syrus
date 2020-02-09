@@ -18,15 +18,15 @@ pub struct MessageContent {
     message: Messages,
 }
 
-// Since all the variants of Messages will have a similar API, we can use a macro
-// to represent common behavior
+// Since all the Message variants have similar interfaces, we can use a macro
+// to implement their common behavior
 
-// NOTE: Are the macros affecting program readability?
 macro_rules! messages_enum {
     ($name:ident { $($variant:ident),* })   => (
         #[derive(Debug, PartialEq)]
         pub enum $name { $($variant($variant)),* }
 
+        // All the messages can implement the default Decode trait implementation
         $(impl Decode for $variant {})*
 
         impl MessageContent {
@@ -92,21 +92,25 @@ impl Decode for MessageContent {
 }
 
 fn decompress(buffer: &mut BytesMut, compression: MessageCompression) -> BytesMut {
-    if let MessageCompression::Lz4 = compression {
-        let mut decodebuf = Vec::new();
-        let mut finalbuf = BytesMut::new();
+    match compression {
+        MessageCompression::Lz4 => {
+            let mut decodebuf = Vec::new();
+            let mut finalbuf = BytesMut::new();
 
-        lz4::decode_block(&buffer, &mut decodebuf);
-        finalbuf.put_slice(&decodebuf);
+            lz4::decode_block(&buffer, &mut decodebuf);
+            finalbuf.put_slice(&decodebuf);
 
-        finalbuf
-    } else {
+            finalbuf
+        }
         // don't need to do anything if there is no compression detected
-
-        // NOTE: Hacky solution to get a uniform API for both
-        //       compressed cases and non-compressed cases
-        buffer.clone()
+        _ => {
+            // FIXME: Hacky solution to get a uniform API for both
+            //       compressed cases and non-compressed cases
+            buffer.clone()
+        }
     }
 }
 
 impl Utils for MessageContent {}
+
+impl Encode for MessageContent {}
