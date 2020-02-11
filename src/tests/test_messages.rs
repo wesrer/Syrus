@@ -9,9 +9,18 @@ fn test_succesful_hello_encode_decode() {
         client_version: "v0.7.2".to_string(),
     };
 
+    // This is the test example used in the official syncthing Go implementation
+    let syncthing_test = Hello {
+        device_name: "test_device".to_string(),
+        client_name: "syncthing".to_string(),
+        client_version: "v0.14.5".to_string(),
+    };
+
     let mut buffer = msg.encode_to_bytes().unwrap();
+    let mut buffer2 = syncthing_test.encode_to_bytes().unwrap();
 
     assert_eq!(msg, Hello::decode_from(&mut buffer).unwrap());
+    assert_eq!(syncthing_test, Hello::decode_from(&mut buffer2).unwrap());
 }
 
 #[test]

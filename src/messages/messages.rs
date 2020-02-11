@@ -113,4 +113,4 @@ fn decompress(buffer: &mut BytesMut, compression: MessageCompression) -> BytesMu
 
 impl Utils for MessageContent {}
 
-impl Encode for MessageContent {}
+// impl Encode for MessageContent {}

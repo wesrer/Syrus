@@ -1,3 +1,4 @@
+pub mod device_id_utils;
 mod header;
 mod hello;
 mod message_traits;

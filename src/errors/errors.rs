@@ -1,50 +1,34 @@
+use crate::errors::invalid_message_errors::InvalidMessageError;
 use prost::{DecodeError, EncodeError};
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub enum Errors {
     InvalidMessageError(InvalidMessageError),
     DecodeError(DecodeError),
     EncodeError(EncodeError),
+    InternalError(InternalError),
 }
 
-#[derive(Debug)]
-pub enum InvalidMessageError {
-    InvalidHello(String),
-    IncorrectLengthSpecified(String),
-    InvalidVersionSyntax(String),
-    InvalidMessageType(String),
-    InvalidMessageCompression(String),
+#[derive(Debug, PartialEq)]
+pub enum InternalError {
+    DeviceIdGenerationError(String),
+    CharacterFetchError(String),
 }
 
-impl InvalidMessageError {
-    pub fn invalid_hello() -> Self {
-        Self::InvalidHello(
-            "Incorrect Magic Number at the beginning of message. Expected Hello".to_string(),
-        )
+impl InternalError {
+    // TODO: Maybe refactor the success type to use generics
+    pub fn device_id_generation_error(q: char, alphabet: &str) -> Result<char, Errors> {
+        Err(Errors::InternalError(
+            InternalError::DeviceIdGenerationError(format!(
+                "Char {} is not valid in alphabet {}",
+                q, alphabet
+            )),
+        ))
     }
 
-    pub fn incorrect_length(msg_type: String) -> Self {
-        Self::IncorrectLengthSpecified(
-            format!("Length Specified by {} message doesn't match actual message length. Cannot establish connection.", msg_type)
-        )
-    }
-
-    pub fn invalid_version() -> Self {
-        Self::InvalidVersionSyntax(
-            "Client version provided does not semantic versioning standards. Cannot connect to client."
-                .to_string(),
-        )
-    }
-
-    pub fn invalid_message_type() -> Self {
-        Self::InvalidMessageType(
-            "Message Type not recognized. Could not decode message.".to_string(),
-        )
-    }
-
-    pub fn invalid_message_compression() -> Self {
-        Self::InvalidMessageCompression(
-            "Message Compression type not recognized. Could not decode message.".to_string(),
-        )
+    pub fn character_fetch_error(q: usize, alphabet: &str) -> Result<char, Errors> {
+        Err(Errors::InternalError(InternalError::CharacterFetchError(
+            format!("Could not fetch character {} from alphabet {}", q, alphabet),
+        )))
     }
 }
