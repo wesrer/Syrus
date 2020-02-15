@@ -58,9 +58,7 @@ impl Utils for Hello {}
 
 fn is_hello(magic_number: i32) -> Result<(), Errors> {
     if magic_number != globals::MAGIC_NUMBER_HELLO_MESSAGE {
-        return Err(Errors::InvalidMessageError(
-            InvalidMessageError::invalid_hello(),
-        ));
+        return Err(InvalidMessageError::invalid_hello());
     }
     Ok(())
 }

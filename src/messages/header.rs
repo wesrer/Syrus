@@ -40,18 +40,14 @@ impl Header {
     pub fn message_type(&self) -> Result<MessageType, Errors> {
         match MessageType::from_i32(self.r#type) {
             Some(x) => Ok(x),
-            None => Err(Errors::InvalidMessageError(
-                InvalidMessageError::invalid_message_type(),
-            )),
+            None => Err(InvalidMessageError::invalid_message_type()),
         }
     }
 
     pub fn message_compression(&self) -> Result<MessageCompression, Errors> {
         match MessageCompression::from_i32(self.compression) {
             Some(x) => Ok(x),
-            None => Err(Errors::InvalidMessageError(
-                InvalidMessageError::invalid_message_compression(),
-            )),
+            None => Err(InvalidMessageError::invalid_message_compression()),
         }
     }
 }

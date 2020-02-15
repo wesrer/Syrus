@@ -23,9 +23,7 @@ pub trait Decode {
 pub trait Utils {
     fn verify_len(buffer: &BytesMut, size: usize, msg_type: String) -> Result<(), Errors> {
         if buffer.len() != size {
-            return Err(Errors::InvalidMessageError(
-                InvalidMessageError::incorrect_length(msg_type),
-            ));
+            return Err(InvalidMessageError::incorrect_length(msg_type));
         }
 
         Ok(())
