@@ -13,10 +13,7 @@ impl Decode for Header {
 
         let header = buffer.split_to(header_len as usize);
 
-        match Header::decode(header) {
-            Ok(msg) => Ok(msg),
-            Err(e) => Err(Errors::DecodeError(e)),
-        }
+        Header::decode(header).map_err(|e| Errors::DecodeError(e))
     }
 }
 
@@ -38,20 +35,17 @@ impl Encode for Header {
 
 impl Header {
     pub fn message_type(&self) -> Result<MessageType, Errors> {
-        match MessageType::from_i32(self.r#type) {
-            Some(x) => Ok(x),
-            None => Err(InvalidMessageError::invalid_message_type()),
-        }
+        MessageType::from_i32(self.r#type).ok_or(InvalidMessageError::invalid_message_type())
     }
 
     pub fn message_compression(&self) -> Result<MessageCompression, Errors> {
-        match MessageCompression::from_i32(self.compression) {
-            Some(x) => Ok(x),
-            None => Err(InvalidMessageError::invalid_message_compression()),
-        }
+        MessageCompression::from_i32(self.compression)
+            .ok_or(InvalidMessageError::invalid_message_compression())
     }
 }
 
 fn read_header_length(buffer: &mut BytesMut) -> u16 {
+    // Splits the bytes into at index 2
+    // Afterwards, buffer contains the bytes [2, len] and this returns the rest
     buffer.split_to(2).get_u16()
 }

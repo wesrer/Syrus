@@ -2,18 +2,18 @@ use crate::block_exchange_protocol::{Header, Hello, MessageCompression, MessageT
 use crate::messages::{Decode, Encode};
 
 #[test]
-fn test_succesful_hello_encode_decode() {
+fn test_hello_message_encode_decode() {
     let msg = Hello {
-        device_name: "This Android".to_string(),
-        client_name: "syncthing".to_string(),
-        client_version: "v0.7.2".to_string(),
+        device_name: "This Android".to_owned(),
+        client_name: "syncthing".to_owned(),
+        client_version: "v0.7.2".to_owned(),
     };
 
     // This is the test example used in the official syncthing Go implementation
     let syncthing_test = Hello {
-        device_name: "test_device".to_string(),
-        client_name: "syncthing".to_string(),
-        client_version: "v0.14.5".to_string(),
+        device_name: "test_device".to_owned(),
+        client_name: "syncthing".to_owned(),
+        client_version: "v0.14.5".to_owned(),
     };
 
     let mut buffer = msg.encode_to_bytes().unwrap();
@@ -24,7 +24,7 @@ fn test_succesful_hello_encode_decode() {
 }
 
 #[test]
-fn test_succesful_header_encode_decode() {
+fn test_message_header_encode_decode() {
     let header_without_compression = Header {
         r#type: MessageType::DownloadProgress as i32,
         compression: MessageCompression::None as i32,

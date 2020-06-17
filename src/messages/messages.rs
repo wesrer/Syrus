@@ -20,7 +20,6 @@ pub struct MessageContent {
 
 // Since all the Message variants have similar interfaces, we can use a macro
 // to implement their common behavior
-
 macro_rules! messages_enum {
     ($name:ident { $($variant:ident),* })   => (
         #[derive(Debug, PartialEq)]
@@ -45,14 +44,15 @@ macro_rules! messages_enum {
 }
 
 // Expands to:
-// pub enum Messages {
-//      ClusterConfig(ClusterConfig),
-//      ...
-// }
+//      pub enum Messages {
+//          ClusterConfig(ClusterConfig),
+//          ...
+//      }
+//
 // Where the ClusterConfig inside the paren is the struct initialized by prost
 //
 // The macro also makes all the variants of Message to impl Decode, so we can
-// call decode_from(buffer) on them directly
+// call `decode_from(buffer)` on them directly
 #[macro_use]
 messages_enum!(Messages {
     ClusterConfig,
@@ -70,12 +70,13 @@ impl Decode for MessageContent {
         let header = Header::decode_from(buffer)?;
 
         // NOTE: We are getting i32 because of the protocol specifications of always assuming we receive ints
-        //       and not unsigneds, even though it doesn't make much sense to received signed values.
+        //       and not unsigneds, even though it doesn't make much sense to received signed values in this context
+        //
         // TODO: Assess whether we should verify if this is ever negative, which would indicate a corrupt block
         let msg_len = buffer.split_to(4).get_i32();
 
         // TODO: instead of sending post-auth message as the message type, generate strings from message types
-        Self::verify_len(&buffer, msg_len as usize, "Post-Auth".to_string())?;
+        Self::verify_len(&buffer, msg_len as usize, "Post-Auth".to_owned())?;
 
         let mut decompressed = decompress(buffer, header.message_compression()?);
 
@@ -103,11 +104,10 @@ fn decompress(buffer: &mut BytesMut, compression: MessageCompression) -> BytesMu
             finalbuf
         }
         // don't need to do anything if there is no compression detected
-        _ => {
-            // FIXME: Hacky solution to get a uniform API for both
-            //       compressed cases and non-compressed cases
-            buffer.clone()
-        }
+        //
+        // FIXME: Hacky solution to get a uniform API for both
+        //       compressed cases and non-compressed cases
+        _ => buffer.clone(),
     }
 }
 
