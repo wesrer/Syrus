@@ -31,11 +31,6 @@ fn test_message_header_encode_decode() {
     };
 
     let header_with_compression = Header {
-        r#type: MessageType::DownloadProgress as i32,
-        compression: MessageCompression::None as i32,
-    };
-
-    Header {
         r#type: MessageType::IndexUpdate as i32,
         compression: MessageCompression::Lz4 as i32,
     };

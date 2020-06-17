@@ -17,18 +17,17 @@ pub enum InternalError {
 
 impl InternalError {
     // TODO: Maybe refactor the success type to use generics
-    pub fn device_id_generation_error(q: char, alphabet: &str) -> Result<char, Errors> {
-        Err(Errors::InternalError(
-            InternalError::DeviceIdGenerationError(format!(
-                "Char {} is not valid in alphabet {}",
-                q, alphabet
-            )),
-        ))
+    pub fn device_id_generation_error(q: char, alphabet: &str) -> Errors {
+        Errors::InternalError(InternalError::DeviceIdGenerationError(format!(
+            "Char {} is not valid in alphabet {}",
+            q, alphabet
+        )))
     }
 
-    pub fn character_fetch_error(q: usize, alphabet: &str) -> Result<char, Errors> {
-        Err(Errors::InternalError(InternalError::CharacterFetchError(
-            format!("Could not fetch character {} from alphabet {}", q, alphabet),
+    pub fn character_fetch_error(q: usize, alphabet: &str) -> Errors {
+        Errors::InternalError(InternalError::CharacterFetchError(format!(
+            "Could not fetch character {} from alphabet {}",
+            q, alphabet
         )))
     }
 }
