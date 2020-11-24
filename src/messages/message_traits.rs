@@ -13,10 +13,7 @@ pub trait Decode {
     {
         // Try to decode with the prost decode function given for the
         // implemented struct, and propagate errors upwards
-        match Self::decode(buffer) {
-            Ok(x) => Ok(x),
-            Err(e) => Err(Errors::DecodeError(e)),
-        }
+        Self::decode(buffer).map_err(|e| Errors::DecodeError(e))
     }
 }
 

@@ -28,6 +28,7 @@ pub fn generate(alphabet: &str, s: String) -> Result<char, Errors> {
             }
         }
     }
+
     let remainder = sum % n;
     let check_code_point = (n - remainder) % n;
 
