@@ -22,7 +22,6 @@ pub trait Utils {
         if buffer.len() != size {
             return Err(InvalidMessageError::incorrect_length(msg_type));
         }
-
         Ok(())
     }
 }

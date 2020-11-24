@@ -4,7 +4,6 @@ use crate::{
     globals,
     messages::{Decode, Encode, Utils},
 };
-
 use bytes::{Buf, BufMut, BytesMut};
 use prost::Message;
 
@@ -18,7 +17,8 @@ impl Encode for Hello {
         // encode the message into encode buffer and match on the returned result
         match self.encode(&mut encodebuf) {
             Ok(_) => {
-                // Add the magic number for the Hello message to the beginning of the buffer
+                // Add the magic number for the Hello message to the beginning
+                // of the buffer
                 finalbuf.put_i32(globals::MAGIC_NUMBER_HELLO_MESSAGE);
 
                 // Add the size of the encoding to the buffer next
@@ -43,14 +43,13 @@ impl Decode for Hello {
         let magic_num = buffer.split_to(4).get_i32();
         let size = buffer.split_to(2).get_i16();
 
-        // Throw errors if packet is unreliable
+        // Guard clauses to throw errors if packet is unreliable
         is_hello(magic_num)?;
         Hello::verify_len(&buffer, size as usize, "Hello".to_string())?;
 
-        match Hello::decode(buffer) {
-            Ok(msg) => Ok(msg),
-            Err(e) => Err(Errors::DecodeError(e)),
-        }
+        // Use the prost generated decode now that we have verified that the
+        // packet doesn't have obvious easy to catch errors.
+        Hello::decode(buffer).map_err(|e| Errors::DecodeError(e))
     }
 }
 

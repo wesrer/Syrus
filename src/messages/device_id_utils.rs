@@ -1,5 +1,5 @@
 use crate::errors::{Errors, InternalError};
-use crate::globals;
+// use crate::globals;
 
 // NOTE: This module uses a slightly modified version of the Luhn's mod n
 // algorithm - Instead of looping right to left, it loops left to right.

@@ -16,7 +16,6 @@ pub enum InternalError {
 }
 
 impl InternalError {
-    // TODO: Maybe refactor the success type to use generics
     pub fn device_id_generation_error(q: char, alphabet: &str) -> Errors {
         Errors::InternalError(InternalError::DeviceIdGenerationError(format!(
             "Char {} is not valid in alphabet {}",

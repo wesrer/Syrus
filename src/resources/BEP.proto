@@ -29,7 +29,7 @@ enum MessageCompression {
 }
 
 message ClusterConfig {
-    // list of folders that will be synchronized over the 
+    // list of folders that will be synchronized over the
     // current connection
     repeated Folder folders = 1;
 }
@@ -45,36 +45,36 @@ message Folder {
     bool   disable_temp_indexes = 6; // set for folders that will not dispatch and do not wish
                                      // to receive progress updates about partially downloaded
                                      // files via Download Progress messages
-    
+
     repeated Device devices = 16;
 }
 
 message Device {
     // 32 bit unique id for this device.
     // Syrus uses the SHA-256 of the device X.509 certificate
-    bytes           id                         = 1; 
-    
+    bytes           id                         = 1;
+
     // Human readable name assigned to the described
-    // device by the sending device. May be empty and 
-    string          name                       = 2; 
-    
+    // device by the sending device. May be empty and
+    string          name                       = 2;
+
     // The list of addresses used by the sending device to connect
     // to the described device
     repeated string addresses                  = 3;
-    
+
     // Indicates the compression mode for this device and folder
     Compression     compression                = 4;
-    
+
     // Indicates the expected certificate name for this device
     // Is usually blank, indicating to use the implementation default
     string          cert_name                  = 5;
-    
+
     // Contains the highest sequence number of the files in the index
     int64           max_sequence               = 6;
-    
+
     // set for devices that are trusted as cluster introducers
     bool            introducer                 = 7;
-    
+
     // Contains the unique identifier for the current set of index data
     uint64          index_id                   = 8;
 
@@ -151,7 +151,7 @@ message Request {
     int32  id             = 1;
 
     // folder and name are documented for the index message.
-    // offset and size fields specify the region of the file to be transferred. 
+    // offset and size fields specify the region of the file to be transferred.
     // This should equate to exactly one block as seen in an Index message.
     string folder         = 2;
     string name           = 3;
@@ -177,17 +177,17 @@ message Response {
     // Requested data block or empty if the requested block is not available
     bytes     data = 2;
     // Error code describing a reason a Request could not be fulfilled, in the
-    // case where zero length data was returned. 
+    // case where zero length data was returned.
     ErrorCode code = 3;
 }
 
 enum ErrorCode {
     NO_ERROR     = 0; // data is present
     GENERIC      = 1;
-    
+
     // the requested file doesn't exist, or the offset is outside
     // the acceptable range for this file
-    NO_SUCH_FILE = 2; 
+    NO_SUCH_FILE = 2;
 
     // file exists but has invalid bit set or is otherwise unavailable
     INVALID_FILE = 3;
