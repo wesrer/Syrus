@@ -1,7 +1,7 @@
 use crate::{
     block_exchange_protocol::{Header, MessageCompression, MessageType},
+    core::messages::{Decode, Encode},
     errors::{Errors, InvalidMessageError},
-    messages::{Decode, Encode},
 };
 
 use bytes::{Buf, BufMut, BytesMut};

@@ -1,5 +1,5 @@
+use crate::core::messages::generate;
 use crate::errors::{Errors, InternalError};
-use crate::messages::device_id_utils::*;
 
 #[test]
 fn test_generating_ids() {

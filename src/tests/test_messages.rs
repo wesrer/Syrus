@@ -1,5 +1,5 @@
 use crate::block_exchange_protocol::{Header, Hello, MessageCompression, MessageType};
-use crate::messages::{Decode, Encode};
+use crate::core::messages::{Decode, Encode};
 
 #[test]
 fn test_hello_message_encode_decode() {

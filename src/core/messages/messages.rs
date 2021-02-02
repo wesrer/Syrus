@@ -3,8 +3,8 @@ use crate::{
         Close, ClusterConfig, DownloadProgress, Header, Index, IndexUpdate, MessageCompression,
         MessageType, Ping, Request, Response,
     },
+    core::messages::{Decode, Encode, Utils},
     errors::{Errors, InvalidMessageError},
-    messages::{Decode, Encode, Utils},
 };
 
 use bytes::{Buf, BufMut, BytesMut};

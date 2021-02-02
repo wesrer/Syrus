@@ -1,6 +1,6 @@
+mod core;
 mod errors;
 mod globals;
-mod messages;
 
 #[cfg(test)]
 mod tests;

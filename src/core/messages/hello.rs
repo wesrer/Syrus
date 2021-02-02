@@ -1,8 +1,8 @@
 use crate::{
     block_exchange_protocol::Hello,
+    core::messages::{Decode, Encode, Utils},
     errors::{Errors, InvalidMessageError},
     globals,
-    messages::{Decode, Encode, Utils},
 };
 use bytes::{Buf, BufMut, BytesMut};
 use prost::Message;
